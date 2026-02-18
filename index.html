@@ -3,208 +3,165 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Transaction History - Pro</title>
+    <title>Testimoni - Dhikzx Clouds</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            /* Palette Warna Profesional */
-            --bg-body: #0f172a;        /* Dark Blue */
-            --bg-card: #1e293b;        /* Slate */
-            --accent: #22c55e;         /* Green Success */
-            --text-main: #f8fafc;
-            --text-dim: #94a3b8;
-            --border-color: #334155;
-            
-            /* Kecepatan Animasi (Makin besar detik, makin lambat) */
-            --speed: 35s; 
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+            --bg-dark: #0b0e11;
+            --bg-card: #161b22;
+            --accent: #22c55e;
+            --text-primary: #e6edf3;
+            --text-dim: #8b949e;
+            --border: #30363d;
+            --speed: 40s;
         }
 
         body {
             font-family: 'Inter', sans-serif;
-            background-color: var(--bg-body);
-            color: var(--text-main);
+            background-color: var(--bg-dark);
+            margin: 0;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            height: 100vh;
+            min-height: 100vh;
+        }
+
+        /* Kontainer Utama agar Marquee di Tengah */
+        main {
+            flex: 1;
+            display: flex;
+            align-items: center;
             overflow: hidden;
         }
 
-        h2 {
-            text-align: center;
-            margin-bottom: 2rem;
-            font-size: 1.5rem;
-            letter-spacing: 1px;
-        }
-
-        /* Container Marquee Utama */
-        .marquee {
-            position: relative;
+        .marquee-wrapper {
             width: 100%;
             padding: 20px 0;
-            background: rgba(30, 41, 59, 0.4);
-            border-top: 1px solid var(--border-color);
-            border-bottom: 1px solid var(--border-color);
+            position: relative;
             overflow: hidden;
             display: flex;
         }
 
-        /* Gradasi Efek Fade di Kiri & Kanan */
-        .marquee::before,
-        .marquee::after {
-            content: "";
-            position: absolute;
-            top: 0;
-            width: 15%;
-            height: 100%;
-            z-index: 2;
-            pointer-events: none;
-        }
-        .marquee::before {
-            left: 0;
-            background: linear-gradient(to right, var(--bg-body), transparent);
-        }
-        .marquee::after {
-            right: 0;
-            background: linear-gradient(to left, var(--bg-body), transparent);
-        }
-
-        /* Wrapper Konten Bergerak */
         .marquee-content {
             display: flex;
             flex-shrink: 0;
-            gap: 20px;
-            padding-left: 20px;
-            animation: scroll-left var(--speed) linear infinite;
+            gap: 25px;
+            animation: scroll var(--speed) linear infinite;
         }
 
-        /* Card Style */
+        /* Card Setup (Portrait Mode) */
         .card {
             background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 12px 20px;
-            min-width: 320px;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 12px;
+            width: 200px; /* Lebar dikecilkan dikit biar pas */
             display: flex;
-            align-items: center;
-            gap: 15px;
-            transition: transform 0.3s ease, border-color 0.3s ease;
-            cursor: pointer;
+            flex-direction: column;
+            gap: 10px;
+            transition: 0.3s;
         }
 
         .card:hover {
-            transform: translateY(-5px);
             border-color: var(--accent);
+            transform: scale(1.02);
         }
 
-        /* Foto User */
-        .card img {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
+        .card .receipt-img {
+            width: 100%;
+            height: 300px; /* Panjang ke bawah */
+            border-radius: 8px;
             object-fit: cover;
-            background: #475569;
-            border: 2px solid var(--border-color);
-        }
-
-        /* Informasi Detail */
-        .details {
-            display: flex;
-            flex-direction: column;
+            border: 1px solid var(--border);
         }
 
         .details b {
-            font-size: 14px;
-            color: var(--text-main);
-            margin-bottom: 2px;
+            font-size: 13px;
+            color: var(--text-primary);
+            display: block;
         }
 
         .details span {
-            font-size: 12px;
+            font-size: 11px;
             color: var(--text-dim);
-        }
-
-        /* Harga & Status */
-        .price-tag {
-            margin-left: auto;
-            text-align: right;
-        }
-
-        .price-tag .amount {
             display: block;
-            color: var(--accent);
-            font-weight: 700;
-            font-size: 14px;
         }
 
-        .price-tag .status {
+        .status-badge {
             font-size: 10px;
-            background: rgba(34, 197, 94, 0.1);
+            font-weight: 700;
             color: var(--accent);
-            padding: 2px 8px;
-            border-radius: 20px;
-            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 5px;
         }
 
-        /* Keyframes Animasi */
-        @keyframes scroll-left {
+        /* Footer Style */
+        footer {
+            padding: 20px;
+            text-align: center;
+            background: rgba(22, 27, 34, 0.8);
+            border-top: 1px solid var(--border);
+            color: var(--text-dim);
+            font-size: 14px;
+            letter-spacing: 0.5px;
+        }
+
+        footer b {
+            color: var(--text-primary);
+            text-shadow: 0 0 10px rgba(34, 197, 94, 0.3);
+        }
+
+        @keyframes scroll {
             from { transform: translateX(0); }
             to { transform: translateX(-100%); }
         }
 
-        /* Pause saat hover */
-        .marquee:hover .marquee-content {
+        .marquee-wrapper:hover .marquee-content {
             animation-play-state: paused;
         }
+
+        /* Fade Side */
+        .marquee-wrapper::before, .marquee-wrapper::after {
+            content: ""; position: absolute; top: 0; width: 15%; height: 100%; z-index: 2;
+        }
+        .marquee-wrapper::before { left: 0; background: linear-gradient(to right, var(--bg-dark), transparent); }
+        .marquee-wrapper::after { right: 0; background: linear-gradient(to left, var(--bg-dark), transparent); }
     </style>
 </head>
 <body>
 
-    <h2>Recent Transactions</h2>
-
-    <div class="marquee" id="marquee-root">
+    <main>
+        <div class="marquee-wrapper">
+            <div class="marquee-content" id="marquee-list"></div>
         </div>
+    </main>
+
+    <footer>
+        © <b>Dhikzx Clouds</b> – Miwa Botz
+    </footer>
 
     <script type="module">
         import { testimoniData } from './js/data.js';
 
-        const root = document.getElementById('marquee-root');
+        const listContainer = document.getElementById('marquee-list');
 
-        // Fungsi render sekumpulan card
-        const createGroup = () => {
-            const group = document.createElement('div');
-            group.className = 'marquee-content';
-            
-            group.innerHTML = testimoniData.map(item => `
+        function createCard(data) {
+            return `
                 <div class="card">
-                    <img src="${item.gambar}" alt="user" onerror="this.src='https://ui-avatars.com/api/?name=${item.nama}&background=random'">
+                    <img src="${data.gambar}" class="receipt-img" alt="Struk">
                     <div class="details">
-                        <b>${item.nama}</b>
-                        <span>${item.deskripsi}</span>
-                    </div>
-                    <div class="price-tag">
-                        <span class="amount">${item.harga}</span>
-                        <span class="status">${item.status}</span>
+                        <b>${data.nama}</b>
+                        <span>${data.deskripsi}</span>
+                        <div class="status-badge">✔ ${data.status}</div>
                     </div>
                 </div>
-            `).join('');
-            
-            return group;
-        };
+            `;
+        }
 
-        /** * Logic Infinite: 
-         * Kita render 2 grup yang identik. 
-         * Saat grup 1 bergeser keluar layar, grup 2 masuk, menciptakan efek tanpa putus.
-         */
-        root.appendChild(createGroup());
-        root.appendChild(createGroup());
+        const htmlContent = testimoniData.map(item => createCard(item)).join('');
+        listContainer.innerHTML = htmlContent + htmlContent;
     </script>
 </body>
 </html>
