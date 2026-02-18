@@ -25,49 +25,35 @@
             width: 100vw;
             display: flex;
             flex-direction: column;
-            overflow: hidden; /* Mencegah scroll seluruh halaman */
+            overflow: hidden;
         }
 
-        /* Header Tetap di Atas */
-        header { 
-            padding: 25px 0 15px; 
-            text-align: center; 
-            z-index: 20;
-        }
+        header { padding: 25px 0 10px; text-align: center; flex-shrink: 0; }
         header h1 { font-size: 1.4rem; font-weight: 700; }
         header h1 span { color: var(--accent); }
 
-        /* Container Tengah */
         main {
             flex: 1;
             display: flex;
             align-items: center;
+            overflow: hidden; /* Sembunyikan scrollbar bawaan */
             position: relative;
-            overflow: hidden;
         }
 
-        /* Area yang Bisa di-Scroll/Drag */
-        #scroll-wrapper {
+        /* CONTAINER MARQUEE */
+        .marquee-wrapper {
+            display: flex;
+            width: max-content; /* Biar lebarnya sepanjang konten */
+            animation: scroll-infinite 30s linear infinite; /* Animasi di sini */
+        }
+
+        .marquee-group {
             display: flex;
             gap: 20px;
-            padding: 0 40px;
-            overflow-x: auto; /* Bisa digeser manual pake jari */
-            cursor: grab;
-            scroll-behavior: auto; /* Matikan smooth biar drag ngga delay */
-            -webkit-overflow-scrolling: touch; /* Halus di iPhone */
-            width: 100%;
+            padding: 0 10px;
         }
 
-        /* Sembunyikan Scrollbar */
-        #scroll-wrapper::-webkit-scrollbar { display: none; }
-
-        .marquee-content {
-            display: flex;
-            gap: 20px;
-            /* Kita pakai animasi CSS tapi pelan saja */
-            animation: scroll-anim 40s linear infinite;
-        }
-
+        /* CARD STYLING PORTRAIT */
         .card {
             background: var(--bg-card);
             border: 1px solid var(--border);
@@ -78,7 +64,6 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
-            pointer-events: none; /* Supaya klik ngga ganggu drag wrapper */
         }
 
         .card img {
@@ -87,14 +72,14 @@
             border-radius: 10px;
             object-fit: cover;
             background: #0b0e11;
-            pointer-events: none;
+            border: 1px solid var(--border);
         }
 
         .details b { font-size: 14px; color: var(--text-main); }
         .details span { font-size: 11px; color: var(--text-dim); }
         .status-badge { font-size: 10px; color: var(--accent); font-weight: bold; margin-top: 5px; }
 
-        /* Footer Melayang di Bawah (Fixed) */
+        /* FOOTER TETAP DI BAWAH */
         footer {
             position: fixed;
             bottom: 0;
@@ -110,16 +95,15 @@
             z-index: 100;
         }
 
-        footer b { color: var(--text-main); }
-
-        @keyframes scroll-anim {
+        /* ANIMASI INFINITE */
+        @keyframes scroll-infinite {
             0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
+            /* Tarik ke kiri sejauh satu grup penuh */
+            100% { transform: translateX(-50%); } 
         }
 
-        /* Berhenti pas disentuh/hover */
-        #scroll-wrapper:hover .marquee-content,
-        #scroll-wrapper:active .marquee-content {
+        /* Berhenti pas di-hover */
+        main:hover .marquee-wrapper {
             animation-play-state: paused;
         }
     </style>
@@ -130,9 +114,10 @@
         <h1>Testimoni By <span>Miwa Botz</span></h1>
     </header>
 
-    <main>
-        <div id="scroll-wrapper">
-            <div class="marquee-content" id="marquee-list"></div>
+    <main id="main-container">
+        <div class="marquee-wrapper" id="marquee-root">
+            <div class="marquee-group" id="group-1"></div>
+            <div class="marquee-group" id="group-2"></div>
         </div>
     </main>
 
@@ -142,13 +127,14 @@
 
     <script type="module">
         import { testimoniData } from './js/data.js';
-        const listContainer = document.getElementById('marquee-list');
-        const wrapper = document.getElementById('scroll-wrapper');
+
+        const group1 = document.getElementById('group-1');
+        const group2 = document.getElementById('group-2');
 
         function createCard(data) {
             return `
                 <div class="card">
-                    <img src="${data.gambar}" alt="Struk" onerror="this.src='https://via.placeholder.com/300x600/1e293b/ffffff?text=Cek+Folder+Img'">
+                    <img src="${data.gambar}" alt="Struk" onerror="this.src='https://via.placeholder.com/300x600/1e293b/ffffff?text=Cek+Img+Folder'">
                     <div class="details">
                         <b>${data.nama}</b>
                         <span>${data.deskripsi}</span>
@@ -158,28 +144,30 @@
             `;
         }
 
-        // Duplikasi konten biar animasi ngga putus
+        // Render data yang sama ke kedua grup
         const htmlContent = testimoniData.map(item => createCard(item)).join('');
-        listContainer.innerHTML = htmlContent + htmlContent + htmlContent;
+        group1.innerHTML = htmlContent;
+        group2.innerHTML = htmlContent;
 
-        // Logic Drag Manual (Mouse & Touch)
+        // Logic Drag Manual (Opsional, tapi stabil)
+        const main = document.getElementById('main-container');
         let isDown = false;
         let startX;
         let scrollLeft;
 
-        wrapper.addEventListener('mousedown', (e) => {
+        main.addEventListener('mousedown', (e) => {
             isDown = true;
-            startX = e.pageX - wrapper.offsetLeft;
-            scrollLeft = wrapper.scrollLeft;
+            startX = e.pageX - main.offsetLeft;
+            scrollLeft = main.scrollLeft;
         });
-        wrapper.addEventListener('mouseleave', () => isDown = false);
-        wrapper.addEventListener('mouseup', () => isDown = false);
-        wrapper.addEventListener('mousemove', (e) => {
+        main.addEventListener('mouseleave', () => isDown = false);
+        main.addEventListener('mouseup', () => isDown = false);
+        main.addEventListener('mousemove', (e) => {
             if(!isDown) return;
             e.preventDefault();
-            const x = e.pageX - wrapper.offsetLeft;
+            const x = e.pageX - main.offsetLeft;
             const walk = (x - startX) * 2;
-            wrapper.scrollLeft = scrollLeft - walk;
+            main.scrollLeft = scrollLeft - walk;
         });
     </script>
 </body>
