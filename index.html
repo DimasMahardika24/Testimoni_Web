@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Testimoni - Miwa Botz</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
@@ -21,36 +21,51 @@
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-main);
             color: var(--text-main);
+            height: 100vh;
+            width: 100vw;
             display: flex;
             flex-direction: column;
-            height: 100vh; /* Mengunci tinggi layar */
-            width: 100vw;
-            overflow: hidden;
+            overflow: hidden; /* Mencegah scroll seluruh halaman */
         }
 
-        /* Header */
+        /* Header Tetap di Atas */
         header { 
-            padding: 20px 0; 
+            padding: 25px 0 15px; 
             text-align: center; 
-            flex-shrink: 0;
+            z-index: 20;
         }
-        header h1 { font-size: 1.5rem; font-weight: 700; }
+        header h1 { font-size: 1.4rem; font-weight: 700; }
         header h1 span { color: var(--accent); }
 
-        /* Area Utama */
+        /* Container Tengah */
         main {
-            flex: 1; /* Mengambil sisa ruang agar footer terdorong ke bawah */
+            flex: 1;
             display: flex;
             align-items: center;
-            overflow: hidden;
             position: relative;
+            overflow: hidden;
         }
+
+        /* Area yang Bisa di-Scroll/Drag */
+        #scroll-wrapper {
+            display: flex;
+            gap: 20px;
+            padding: 0 40px;
+            overflow-x: auto; /* Bisa digeser manual pake jari */
+            cursor: grab;
+            scroll-behavior: auto; /* Matikan smooth biar drag ngga delay */
+            -webkit-overflow-scrolling: touch; /* Halus di iPhone */
+            width: 100%;
+        }
+
+        /* Sembunyikan Scrollbar */
+        #scroll-wrapper::-webkit-scrollbar { display: none; }
 
         .marquee-content {
             display: flex;
             gap: 20px;
-            padding: 0 20px;
-            animation: scroll 30s linear infinite;
+            /* Kita pakai animasi CSS tapi pelan saja */
+            animation: scroll-anim 40s linear infinite;
         }
 
         .card {
@@ -63,41 +78,50 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
+            pointer-events: none; /* Supaya klik ngga ganggu drag wrapper */
         }
 
         .card img {
             width: 100%;
-            height: 300px; /* Portrait tinggi ke bawah */
+            height: 320px; 
             border-radius: 10px;
             object-fit: cover;
             background: #0b0e11;
+            pointer-events: none;
         }
 
-        .details b { font-size: 14px; display: block; }
+        .details b { font-size: 14px; color: var(--text-main); }
         .details span { font-size: 11px; color: var(--text-dim); }
-        .status-badge { font-size: 10px; font-weight: bold; color: var(--accent); margin-top: 5px; }
+        .status-badge { font-size: 10px; color: var(--accent); font-weight: bold; margin-top: 5px; }
 
-        /* Footer Fixed di Bawah */
+        /* Footer Melayang di Bawah (Fixed) */
         footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
             padding: 15px;
             text-align: center;
             background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(5px);
             border-top: 1px solid var(--border);
             color: var(--text-dim);
-            font-size: 13px;
-            flex-shrink: 0; /* Mencegah footer gepeng */
-            z-index: 10;
+            font-size: 12px;
+            z-index: 100;
         }
 
         footer b { color: var(--text-main); }
 
-        @keyframes scroll {
+        @keyframes scroll-anim {
             0% { transform: translateX(0); }
             100% { transform: translateX(-50%); }
         }
 
-        /* Hover Pause */
-        main:hover .marquee-content { animation-play-state: paused; }
+        /* Berhenti pas disentuh/hover */
+        #scroll-wrapper:hover .marquee-content,
+        #scroll-wrapper:active .marquee-content {
+            animation-play-state: paused;
+        }
     </style>
 </head>
 <body>
@@ -107,7 +131,9 @@
     </header>
 
     <main>
-        <div class="marquee-content" id="marquee-list"></div>
+        <div id="scroll-wrapper">
+            <div class="marquee-content" id="marquee-list"></div>
+        </div>
     </main>
 
     <footer>
@@ -117,11 +143,12 @@
     <script type="module">
         import { testimoniData } from './js/data.js';
         const listContainer = document.getElementById('marquee-list');
+        const wrapper = document.getElementById('scroll-wrapper');
 
         function createCard(data) {
             return `
                 <div class="card">
-                    <img src="${data.gambar}" alt="Struk" onerror="this.src='https://via.placeholder.com/300x600/1e293b/ffffff?text=Image+NotFound'">
+                    <img src="${data.gambar}" alt="Struk" onerror="this.src='https://via.placeholder.com/300x600/1e293b/ffffff?text=Cek+Folder+Img'">
                     <div class="details">
                         <b>${data.nama}</b>
                         <span>${data.deskripsi}</span>
@@ -131,8 +158,29 @@
             `;
         }
 
+        // Duplikasi konten biar animasi ngga putus
         const htmlContent = testimoniData.map(item => createCard(item)).join('');
-        listContainer.innerHTML = htmlContent + htmlContent + htmlContent; // Triple biar panjang
+        listContainer.innerHTML = htmlContent + htmlContent + htmlContent;
+
+        // Logic Drag Manual (Mouse & Touch)
+        let isDown = false;
+        let startX;
+        let scrollLeft;
+
+        wrapper.addEventListener('mousedown', (e) => {
+            isDown = true;
+            startX = e.pageX - wrapper.offsetLeft;
+            scrollLeft = wrapper.scrollLeft;
+        });
+        wrapper.addEventListener('mouseleave', () => isDown = false);
+        wrapper.addEventListener('mouseup', () => isDown = false);
+        wrapper.addEventListener('mousemove', (e) => {
+            if(!isDown) return;
+            e.preventDefault();
+            const x = e.pageX - wrapper.offsetLeft;
+            const walk = (x - startX) * 2;
+            wrapper.scrollLeft = scrollLeft - walk;
+        });
     </script>
 </body>
 </html>
