@@ -1,43 +1,20 @@
-/**
- * DATABASE TESTIMONI
- * Deskripsi: Tempat menyimpan data transaksi.
- * Tips: Untuk gambar, bisa pakai link URL atau path lokal seperti 'img/foto.jpg'
- */
-
 export const testimoniData = [
     {
         nama: "Andi Saputra",
-        deskripsi: "Top Up 625 Diamond Mobile Legends",
-        harga: "Rp 150.000",
-        gambar: "https://i.pravatar.cc/150?u=1",
-        status: "Success"
+        deskripsi: "Top Up Rp 25.000 via Pakasir",
+        status: "PEMBAYARAN DITERIMA",
+        gambar: "https://via.placeholder.com/300x600/22c55e/ffffff?text=Struk+Portrait+1" 
     },
     {
         nama: "Budi Gaming",
-        deskripsi: "Pembelian Akun Valorant Platinum",
-        harga: "Rp 450.000",
-        gambar: "https://i.pravatar.cc/150?u=2",
-        status: "Success"
+        deskripsi: "Pembelian Diamond MLBB",
+        status: "PEMBAYARAN DITERIMA",
+        gambar: "https://via.placeholder.com/300x600/3b82f6/ffffff?text=Struk+Portrait+2"
     },
     {
-        nama: "Siska Amelia",
-        deskripsi: "Jasa Joki Rank Mythic (10 Bintang)",
-        harga: "Rp 200.000",
-        gambar: "https://i.pravatar.cc/150?u=3",
-        status: "Success"
-    },
-    {
-        nama: "Dimas Mahardika",
-        deskripsi: "Premium Source Code Landing Page",
-        harga: "Rp 750.000",
-        gambar: "https://i.pravatar.cc/150?u=4",
-        status: "Success"
-    },
-    {
-        nama: "Rizky Store",
-        deskripsi: "Beli Lisensi Windows 11 Pro",
-        harga: "Rp 120.000",
-        gambar: "https://i.pravatar.cc/150?u=5",
-        status: "Success"
+        nama: "Dimas M.",
+        deskripsi: "Custom Order Bot WhatsApp",
+        status: "PEMBAYARAN DITERIMA",
+        gambar: "https://via.placeholder.com/300x600/f59e0b/ffffff?text=Struk+Portrait+3"
     }
 ];
