@@ -3,30 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Testimoni - Dhikzx Clouds</title>
+    <title>Dhikzx Clouds - Testimoni</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --bg-dark: #0b0e11;
-            --bg-card: #161b22;
-            --accent: #22c55e;
-            --text-primary: #e6edf3;
-            --text-dim: #8b949e;
-            --border: #30363d;
-            --speed: 40s;
+            /* Warna diubah agar tidak hitam pekat (lebih berdimensi) */
+            --bg-main: #0f172a;       /* Hitam Slate halus */
+            --bg-card: #1e293b;       /* Kartu lebih terang sedikit */
+            --accent: #22c55e;        /* Hijau sukses */
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --border: #334155;
+            --speed: 35s;
         }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             font-family: 'Inter', sans-serif;
-            background-color: var(--bg-dark);
-            margin: 0;
+            background-color: var(--bg-main);
+            color: var(--text-main);
             display: flex;
             flex-direction: column;
             min-height: 100vh;
         }
 
-        /* Kontainer Utama agar Marquee di Tengah */
         main {
             flex: 1;
             display: flex;
@@ -34,9 +36,10 @@
             overflow: hidden;
         }
 
+        /* Marquee Setup */
         .marquee-wrapper {
             width: 100%;
-            padding: 20px 0;
+            padding: 40px 0;
             position: relative;
             overflow: hidden;
             display: flex;
@@ -45,89 +48,76 @@
         .marquee-content {
             display: flex;
             flex-shrink: 0;
-            gap: 25px;
+            gap: 20px;
             animation: scroll var(--speed) linear infinite;
         }
 
-        /* Card Setup (Portrait Mode) */
+        /* Card Styling Portrait */
         .card {
             background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: 16px;
-            padding: 12px;
-            width: 200px; /* Lebar dikecilkan dikit biar pas */
+            padding: 15px;
+            width: 240px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            transition: 0.3s;
+            gap: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            transition: 0.3s ease;
         }
 
         .card:hover {
+            transform: translateY(-10px);
             border-color: var(--accent);
-            transform: scale(1.02);
+            box-shadow: 0 15px 30px rgba(34, 197, 94, 0.2);
         }
 
-        .card .receipt-img {
+        .card img {
             width: 100%;
-            height: 300px; /* Panjang ke bawah */
-            border-radius: 8px;
+            height: 350px; /* Panjang ke bawah */
+            border-radius: 10px;
             object-fit: cover;
+            background: #0f172a;
             border: 1px solid var(--border);
         }
 
-        .details b {
-            font-size: 13px;
-            color: var(--text-primary);
-            display: block;
-        }
-
-        .details span {
-            font-size: 11px;
-            color: var(--text-dim);
-            display: block;
-        }
-
+        .details b { font-size: 15px; color: var(--text-main); }
+        .details span { font-size: 12px; color: var(--text-dim); display: block; margin: 4px 0; }
+        
         .status-badge {
-            font-size: 10px;
+            font-size: 11px;
             font-weight: 700;
             color: var(--accent);
             display: flex;
             align-items: center;
-            gap: 4px;
-            margin-top: 5px;
+            gap: 6px;
         }
 
-        /* Footer Style */
+        /* Footer Branded */
         footer {
-            padding: 20px;
+            padding: 25px;
             text-align: center;
-            background: rgba(22, 27, 34, 0.8);
+            background: rgba(15, 23, 42, 0.9);
             border-top: 1px solid var(--border);
             color: var(--text-dim);
             font-size: 14px;
-            letter-spacing: 0.5px;
         }
 
-        footer b {
-            color: var(--text-primary);
-            text-shadow: 0 0 10px rgba(34, 197, 94, 0.3);
-        }
+        footer b { color: var(--accent); }
 
         @keyframes scroll {
             from { transform: translateX(0); }
             to { transform: translateX(-100%); }
         }
 
-        .marquee-wrapper:hover .marquee-content {
-            animation-play-state: paused;
-        }
+        .marquee-wrapper:hover .marquee-content { animation-play-state: paused; }
 
-        /* Fade Side */
+        /* Samping Halus */
         .marquee-wrapper::before, .marquee-wrapper::after {
             content: ""; position: absolute; top: 0; width: 15%; height: 100%; z-index: 2;
         }
-        .marquee-wrapper::before { left: 0; background: linear-gradient(to right, var(--bg-dark), transparent); }
-        .marquee-wrapper::after { right: 0; background: linear-gradient(to left, var(--bg-dark), transparent); }
+        .marquee-wrapper::before { left: 0; background: linear-gradient(to right, var(--bg-main), transparent); }
+        .marquee-wrapper::after { right: 0; background: linear-gradient(to left, var(--bg-main), transparent); }
     </style>
 </head>
 <body>
@@ -150,7 +140,7 @@
         function createCard(data) {
             return `
                 <div class="card">
-                    <img src="${data.gambar}" class="receipt-img" alt="Struk">
+                    <img src="${data.gambar}" alt="Testimoni" onerror="this.src='https://via.placeholder.com/300x600/334155/ffffff?text=Image+Not+Found'">
                     <div class="details">
                         <b>${data.nama}</b>
                         <span>${data.deskripsi}</span>
